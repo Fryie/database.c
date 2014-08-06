@@ -42,6 +42,17 @@ int find_table(char *table_name) {
   return index;
 }
 
+int find_column(Table *table, char *column_name) {
+  int index = -1;
+  for (int i = 0; i < table->num_columns; i++) {
+    if (strcmp(table->columns[i], column_name) == 0) {
+        index = i;
+    }
+  }
+
+  return index;
+}
+
 void create_table(char *name) {
   Table *table = malloc(sizeof(Table));
   table->name = name;
@@ -96,6 +107,23 @@ void insert_into(char *table_name, char *values[], int num_values) {
   table->rows[table->num_rows++] = row;
 }
 
+char *select_from(char *column_name, char *table_name, int row_index) {
+  int table_index = find_table(table_name);
+  if (table_index == -1) {
+    printf("Could not find table: %s\n", table_name);
+    return "";
+  }
+
+  Table *table = tables[table_index];
+  int column_index = find_column(table, column_name);
+  Row *row = table->rows[row_index];
+  if (row == NULL) {
+    printf("No such row found: %d\n", row_index);
+    return "";
+  }
+  return row->cells[column_index];
+}
+
 void list_columns(Table *table) {
   for (int i = 0; i < table->num_columns; i++) {
     printf("%s\n", table->columns[i]);
@@ -133,10 +161,10 @@ int main() {
   list_tables();
   drop_table("articles");
   list_tables();
-  /*
-  first_name = select_from("first_name", "customers");
-  last_name = select_from("last_name", "customers");
-  printf("%s %s", first_name, last_name);*/
+
+  char *first_name = select_from("first_name", "customers", 0);
+  char *last_name = select_from("last_name", "customers", 0);
+  printf("%s %s\n", first_name, last_name);
 
   return 0;
 }
