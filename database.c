@@ -1,13 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define MAX_TABLES 10
+
 struct Table {
   char *name;
 };
 
 typedef struct Table Table;
 
-Table *tables[10];
+Table *tables[MAX_TABLES];
 int i = 0;
 
 void create_table(char *name) {
