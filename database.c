@@ -8,13 +8,23 @@
 
 #define MAX_TABLES 10
 #define MAX_COLUMNS 6
+#define MAX_ROWS 10
 
 typedef char *Column;
+
+struct Row {
+  char *cells[MAX_COLUMNS];
+  int num_cells;
+};
+
+typedef struct Row Row;
 
 struct Table {
   char *name;
   Column columns[MAX_COLUMNS];
   int num_columns;
+  Row *rows[MAX_ROWS];
+  int num_rows;
 };
 
 typedef struct Table Table;
@@ -36,6 +46,7 @@ void create_table(char *name) {
   Table *table = malloc(sizeof(Table));
   table->name = name;
   table->num_columns = 0;
+  table->num_rows = 0;
   tables[num_tables++] = table;
 }
 
@@ -64,9 +75,26 @@ void add_column(char *table_name, char *column_name) {
 }
 
 void insert_into(char *table_name, char *values[], int num_values) {
-  return;
-}
+  int table_index = find_table(table_name);
 
+  if (table_index == -1) {
+    printf("Table not found: %s\n", table_name);
+    return;
+  }
+
+  Table *table = tables[table_index];
+
+  if (table->num_columns != num_values) {
+    printf("Number of values does not match number of columns!");
+    return;
+  }
+
+  Row *row = malloc(sizeof(Row));
+  for (int i = 0; i < num_values; i++) {
+    row->cells[row->num_cells++] = values[i];
+  }
+  table->rows[table->num_rows++] = row;
+}
 
 void list_columns(Table *table) {
   for (int i = 0; i < table->num_columns; i++) {
