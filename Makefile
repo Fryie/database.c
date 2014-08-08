@@ -1,7 +1,7 @@
 .PHONY: run
 
-database: database.c
-	gcc database.c -o database
+main: main.c util.h database.h database.c
+	gcc main.c database.c -o main
 
-run: database
-	./database
+run: main
+	./main
