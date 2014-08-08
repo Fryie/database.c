@@ -107,21 +107,29 @@ void insert_into(char *table_name, char *values[], int num_values) {
   table->rows[table->num_rows++] = row;
 }
 
-char *select_from(char *column_name, char *table_name, int row_index) {
+void select_from(char *column_names[], int num_columns, char *table_name, int row_index, char *result[]) {
   int table_index = find_table(table_name);
   if (table_index == -1) {
     printf("Could not find table: %s\n", table_name);
-    return "";
+    for (int i = 0; i < num_columns; i++) {
+      result[i] = "";
+    }
   }
 
   Table *table = tables[table_index];
-  int column_index = find_column(table, column_name);
+
   Row *row = table->rows[row_index];
   if (row == NULL) {
     printf("No such row found: %d\n", row_index);
-    return "";
+    for (int i = 0; i < num_columns; i++) {
+      result[i] = "";
+    }
   }
-  return row->cells[column_index];
+
+  for (int i = 0; i < num_columns; i++) {
+    int column_index = find_column(table, column_names[i]);
+    result[i] = row->cells[column_index];
+  }
 }
 
 void list_columns(Table *table) {
@@ -148,23 +156,28 @@ int main() {
   add_column("customers", "address");
   char *values[] = {"John", "Doe", "3 Kensington Lane"};
   insert_into("customers", values, 3);
+
   create_table("articles");
   add_column("articles", "name");
   add_column("articles", "price");
   char *values2[] = {"MacBook Pro", "$1200"};
   insert_into("articles", values2, 2);
+
   create_table("stores");
   add_column("stores", "city");
   add_column("stores", "size (in km^2)");
   char *values3[] = {"San Francisco", "80"};
   insert_into("stores", values3, 2);
+
   list_tables();
   drop_table("articles");
   list_tables();
 
-  char *first_name = select_from("first_name", "customers", 0);
-  char *last_name = select_from("last_name", "customers", 0);
-  printf("%s %s\n", first_name, last_name);
+  char *select_terms[] = {"first_name", "last_name", "address"};
+  int num_columns = 3;
+  char *result[num_columns];
+  select_from(select_terms, num_columns, "customers", 0, result);
+  printf("%s %s %s\n", result[0], result[1], result[2]);
 
   return 0;
 }
