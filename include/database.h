@@ -26,7 +26,8 @@ struct Table {
 typedef struct Table Table;
 
 /* function headers */
-int find_table(char *table_name);
+int find_table_index(char *table_name);
+Table *find_table(char *table_name);
 int find_column(Table *table, char *column_name);
 int create_table(char *name);
 int drop_table(char *name);

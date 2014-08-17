@@ -7,7 +7,7 @@
 Table *tables[MAX_TABLES];
 int num_tables = 0;
 
-int find_table(char *table_name) {
+int find_table_index(char *table_name) {
   int index = -1;
   for (int i = 0; i < num_tables; i++) {
     if (tables[i] != NULL && strcmp(tables[i]->name, table_name) == 0) {
@@ -16,6 +16,15 @@ int find_table(char *table_name) {
   }
 
   return index;
+}
+
+Table *find_table(char *table_name) {
+  int index = find_table_index(table_name);
+  if (index == -1) {
+    return NULL;
+  }
+
+  return tables[index];
 }
 
 int find_column(Table *table, char *column_name) {
@@ -40,7 +49,7 @@ int create_table(char *name) {
 }
 
 int drop_table(char *name) {
-  int table_index = find_table(name);
+  int table_index = find_table_index(name);
 
   if (table_index == -1) {
     return -1;
@@ -53,26 +62,23 @@ int drop_table(char *name) {
 }
 
 int add_column(char *table_name, char *column_name) {
-  int table_index = find_table(table_name);
+  Table *table = find_table(table_name);
 
-  if (table_index == -1) {
+  if (table == NULL) {
     return -1;
   }
 
-  Table *table = tables[table_index];
   table->columns[table->num_columns++] = column_name;
 
   return 0;
 }
 
 int insert_into(char *table_name, char *values[], int num_values) {
-  int table_index = find_table(table_name);
+  Table *table = find_table(table_name);
 
-  if (table_index == -1) {
+  if (table == NULL) {
     return -1;
   }
-
-  Table *table = tables[table_index];
 
   if (table->num_columns != num_values) {
     return -1;
@@ -92,12 +98,10 @@ int select_from(char *column_names[], int num_columns, char *table_name, int row
     return -1;
   }
 
-  int table_index = find_table(table_name);
-  if (table_index == -1) {
+  Table *table = find_table(table_name);
+  if (table == NULL) {
     return -1;
   }
-
-  Table *table = tables[table_index];
 
   Row *row = table->rows[row_index];
   if (row == NULL) {
@@ -134,12 +138,10 @@ int list_tables() {
 }
 
 int where_equals(char *table_name, char *column_name, char *value) {
-  int table_index = find_table(table_name);
-  if (table_index == -1) {
+  Table *table = find_table(table_name);
+  if (table == NULL) {
     return -1;
   }
-
-  Table *table = tables[table_index];
 
   int column_index = find_column(table, column_name);
   if (column_index == -1) {
