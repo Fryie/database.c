@@ -27,17 +27,6 @@ Table *find_table(char *table_name) {
   return tables[index];
 }
 
-int find_column(Table *table, char *column_name) {
-  int index = -1;
-  for (int i = 0; i < table->num_columns; i++) {
-    if (strcmp(table->columns[i], column_name) == 0) {
-        index = i;
-    }
-  }
-
-  return index;
-}
-
 int create_table(char *name) {
   Table *table = malloc(sizeof(Table));
   table->name = name;
@@ -61,9 +50,7 @@ int drop_table(char *name) {
   return 0;
 }
 
-int add_column(char *table_name, char *column_name) {
-  Table *table = find_table(table_name);
-
+int add_column(Table *table, char *column_name) {
   if (table == NULL) {
     return -1;
   }
@@ -71,6 +58,16 @@ int add_column(char *table_name, char *column_name) {
   table->columns[table->num_columns++] = column_name;
 
   return 0;
+}
+
+int find_column(Table *table, char *column_name) {
+  for (int i = 0; i < table->num_columns; i++) {
+    if (strcmp(table->columns[i], column_name) == 0) {
+      return i;
+    }
+  }
+
+  return -1;
 }
 
 int insert_into(char *table_name, char *values[], int num_values) {

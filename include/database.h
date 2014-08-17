@@ -31,7 +31,7 @@ Table *find_table(char *table_name);
 int find_column(Table *table, char *column_name);
 int create_table(char *name);
 int drop_table(char *name);
-int add_column(char *table_name, char *column_name);
+int add_column(Table *table, char *column_name);
 int insert_into(char *table_name, char *values[], int num_values);
 int select_from(char *column_names[], int num_columns, char *table_name, int row_index, char *result[]);
 int list_columns(Table *table);

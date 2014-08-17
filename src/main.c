@@ -6,9 +6,10 @@
 
 int main() {
   create_table("customers");
-  add_column("customers", "first_name");
-  add_column("customers", "last_name");
-  add_column("customers", "address");
+  Table *customers = find_table("customers");
+  add_column(customers, "first_name");
+  add_column(customers, "last_name");
+  add_column(customers, "address");
   char *values[] = {"John", "Doe", "3 Kensington Lane"};
   insert_into("customers", values, 3);
   char *values2[] = {"Bruce", "Wayne", "20 Hyde Park Corner"};
