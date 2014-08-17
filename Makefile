@@ -1,7 +1,7 @@
 .PHONY: run
 
-main: main.c util.h database.h database.c
-	gcc main.c database.c -o main
+main: src/main.c include/util.h include/database.h src/database.c
+	mkdir -p dist; gcc -Iinclude src/main.c src/database.c -o dist/main
 
 run: main
-	./main
+	dist/main

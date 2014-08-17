@@ -1,2 +1,4 @@
-# executable
-main
+# program executables
+dist
+# test executables
+test-dist
