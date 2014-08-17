@@ -243,6 +243,6 @@ int run_tests(void (*tests)(void))
 	printf("==================================================\r\n");
 
 	_getch();
-	return sea_tests_failed == 0;
+  // custom fix!!
+	return sea_tests_failed != 0;
 }
-
