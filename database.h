@@ -1,3 +1,6 @@
+#ifndef DATABASE_H
+#define DATABASE_H
+
 #define MAX_COLUMNS 6
 #define MAX_ROWS 10
 #define MAX_TABLES 10
@@ -33,3 +36,5 @@ int select_from(char *column_names[], int num_columns, char *table_name, int row
 int list_columns(Table *table);
 int list_tables();
 int where_equals(char *table_name, char *column_name, char *value);
+
+#endif
