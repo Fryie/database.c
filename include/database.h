@@ -8,22 +8,18 @@
 /* type definitions */
 typedef char *Column;
 
-struct Row {
+typedef struct Row {
   char *cells[MAX_COLUMNS];
   int num_cells;
-};
+} Row;
 
-typedef struct Row Row;
-
-struct Table {
+typedef struct Table {
   char *name;
   Column columns[MAX_COLUMNS];
   int num_columns;
   Row *rows[MAX_ROWS];
   int num_rows;
-};
-
-typedef struct Table Table;
+} Table;
 
 /* function headers */
 int find_table_index(char *table_name);
