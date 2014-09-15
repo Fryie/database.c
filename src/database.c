@@ -1,30 +1,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "hash.h"
+
 #include "util.h"
 #include "database.h"
 
-Table *tables[MAX_TABLES];
-int num_tables = 0;
+hash_t *tables;
 
-int find_table_index(char *table_name) {
-  int index = -1;
-  for (int i = 0; i < num_tables; i++) {
-    if (tables[i] != NULL && strcmp(tables[i]->name, table_name) == 0) {
-      index = i;
-    }
-  }
+void init_db() {
+  tables = hash_new();
+}
 
-  return index;
+void free_db() {
+  hash_each_key(tables, {
+    drop_table((char *) key);
+  })
+  hash_free(tables);
 }
 
 Table *find_table(char *table_name) {
-  int index = find_table_index(table_name);
-  if (index == -1) {
-    return NULL;
-  }
-
-  return tables[index];
+  return hash_get(tables, table_name);
 }
 
 int create_table(char *name) {
@@ -32,20 +29,20 @@ int create_table(char *name) {
   table->name = name;
   table->num_columns = 0;
   table->num_rows = 0;
-  tables[num_tables++] = table;
+  hash_set(tables, name, table);
 
   return 0;
 }
 
 int drop_table(char *name) {
-  int table_index = find_table_index(name);
+  Table *table = find_table(name);
 
-  if (table_index == -1) {
+  if (table == NULL) {
     return -1;
   }
 
-  free(tables[table_index]);
-  tables[table_index] = NULL;
+  free(table);
+  hash_del(tables, name);
 
   return 0;
 }
@@ -122,14 +119,12 @@ int list_columns(Table *table) {
 }
 
 int list_tables() {
-  for (int i = 0; i < num_tables; i++) {
-    if (tables[i] != NULL) {
-      printf("Table %d: %s\n", i, tables[i]->name);
-      puts("COLUMNS:");
-      list_columns(tables[i]);
-      puts("");
-    }
-  }
+  hash_each(tables, {
+    printf("Table %s\n", key);
+    puts("COLUMNS:");
+    list_columns((Table *) val);
+    puts("");
+  })
 
   return 0;
 }

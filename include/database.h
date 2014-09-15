@@ -22,6 +22,8 @@ typedef struct Table {
 } Table;
 
 /* function headers */
+void init_db();
+void free_db();
 int find_table_index(char *table_name);
 Table *find_table(char *table_name);
 int find_column(Table *table, char *column_name);

@@ -3,21 +3,26 @@
 
 /* define tests */
 void test_create_and_find_table() {
+  init_db();
   create_table("TEST TABLE");
   create_table("TEST 2");
   assert_string_equal("TEST 2", find_table("TEST 2")->name);
   assert_string_equal("TEST TABLE", find_table("TEST TABLE")->name);
   drop_table("TEST TABLE");
   drop_table("TEST 2");
+  free_db();
 }
 
 void test_drop_table() {
+  init_db();
   create_table("TEST TABLE");
   drop_table("TEST TABLE");
   assert_true(find_table("TEST TABLE") == NULL);
+  free_db();
 }
 
 void test_create_and_find_column() {
+  init_db();
   create_table("TEST TABLE");
   Table *table = find_table("TEST TABLE");
   add_column(table, "COL1");
@@ -26,6 +31,7 @@ void test_create_and_find_column() {
   assert_int_equal(0, find_column(table, "COL1"));
   assert_int_equal(-1, find_column(table, "NONEXISTANT"));
   drop_table("TEST TABLE");
+  free_db();
 }
 
 /* run tests */

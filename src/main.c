@@ -5,6 +5,7 @@
 #include "database.h"
 
 int main() {
+  init_db();
   create_table("customers");
   Table *customers = find_table("customers");
   add_column(customers, "first_name");
@@ -22,6 +23,7 @@ int main() {
   if (success == 0) {
     printf("%s %s, %s\n", result[0], result[1], result[2]);
   }
+  free_db();
 
   return 0;
 }
