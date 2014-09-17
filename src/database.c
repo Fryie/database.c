@@ -98,7 +98,7 @@ int drop_row(Table *table, Row *row) {
 }
 
 Column *find_column(Table *table, char *column_name) {
-  hash_get(table->columns, column_name);
+  return hash_get(table->columns, column_name);
 }
 
 int insert_into(char *table_name, char *column_names[], char *values[], int num_values) {
