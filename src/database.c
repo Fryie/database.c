@@ -27,8 +27,9 @@ Table *find_table(char *table_name) {
 int create_table(char *name) {
   Table *table = malloc(sizeof(Table));
   table->name = name;
-  table->num_columns = 0;
-  table->num_rows = 0;
+  table->columns = hash_new();
+  table->rows = malloc(sizeof(*table->rows));
+  vec_init(table->rows);
   hash_set(tables, name, table);
 
   return 0;
@@ -37,10 +38,26 @@ int create_table(char *name) {
 int drop_table(char *name) {
   Table *table = find_table(name);
 
-  if (table == NULL) {
+  if (!table) {
     return -1;
   }
 
+  /* free columns */
+  hash_each_val(table->columns, {
+    drop_column((Column *) val);
+  })
+  hash_free(table->columns);
+
+  /* free rows */
+  int i;
+  Row *row;
+  vec_foreach(table->rows, row, i) {
+    drop_row(row);
+  }
+  vec_deinit(table->rows);
+  free(table->rows);
+
+  /* free table */
   free(table);
   hash_del(tables, name);
 
@@ -52,68 +69,82 @@ int add_column(Table *table, char *column_name) {
     return -1;
   }
 
-  table->columns[table->num_columns++] = column_name;
+  Column *column = malloc(sizeof(Column)); 
+  column->name = column_name;
+  hash_set(table->columns, column_name, column);
 
   return 0;
 }
 
-int find_column(Table *table, char *column_name) {
-  for (int i = 0; i < table->num_columns; i++) {
-    if (strcmp(table->columns[i], column_name) == 0) {
-      return i;
-    }
-  }
-
-  return -1;
+int drop_column(Column *column) {
 }
 
-int insert_into(char *table_name, char *values[], int num_values) {
+int drop_row(Row *row) {
+}
+
+Column *find_column(Table *table, char *column_name) {
+  hash_get(table->columns, column_name);
+}
+
+int insert_into(char *table_name, char *column_names[], char *values[], int num_values) {
   Table *table = find_table(table_name);
 
-  if (table == NULL) {
-    return -1;
-  }
-
-  if (table->num_columns != num_values) {
+  if (!table) {
     return -1;
   }
 
   Row *row = malloc(sizeof(Row));
+  row->cells = hash_new();
   for (int i = 0; i < num_values; i++) {
-    row->cells[row->num_cells++] = values[i];
+    /* this is not schemaless! only allow access to defined columns */
+    Column *column = find_column(table, column_names[i]);
+    if (!column) {
+      return -1;
+    }
+
+    hash_set(row->cells, column_names[i], values[i]);  
   }
-  table->rows[table->num_rows++] = row;
+  vec_push(table->rows, row);
 
   return 0;
 }
 
-int select_from(char *column_names[], int num_columns, char *table_name, int row_index, char *result[]) {
+hash_t *select_from(char *column_names[], int num_columns, char *table_name, int row_index) {
+  hash_t *result = hash_new();
   if (row_index == -1) {
-    return -1;
+    return NULL;
   }
 
   Table *table = find_table(table_name);
-  if (table == NULL) {
-    return -1;
+  if (!table) {
+    return NULL;
   }
 
-  Row *row = table->rows[row_index];
-  if (row == NULL) {
-    return -1;
+  if (row_index >= table->rows->length) {
+    return NULL;
+  }
+  Row *row = table->rows->data[row_index];
+  if (!row) {
+    return NULL;
   }
 
   for (int i = 0; i < num_columns; i++) {
-    int column_index = find_column(table, column_names[i]);
-    result[i] = row->cells[column_index];
+    /* this is not schemaless! only allow access to defined columns */
+    Column *column = find_column(table, column_names[i]);
+    if (!column) {
+      return NULL;
+    }
+
+    hash_set(result, column_names[i], hash_get(row->cells, column_names[i]));
   }
 
-  return 0;
+  return result;
 }
 
 int list_columns(Table *table) {
-  for (int i = 0; i < table->num_columns; i++) {
-    printf("%s\n", table->columns[i]);
-  }
+  hash_each_key(table->columns, {
+    printf("%s\n", key);
+  })
 
   return 0;
 }
@@ -131,19 +162,20 @@ int list_tables() {
 
 int where_equals(char *table_name, char *column_name, char *value) {
   Table *table = find_table(table_name);
-  if (table == NULL) {
+  if (!table) {
     return -1;
   }
 
-  int column_index = find_column(table, column_name);
-  if (column_index == -1) {
+  Column *column = find_column(table, column_name);
+  if (!column) {
     return -1;
   }
 
   int row_index = -1;
-
-  for (int i = 0; i < table->num_rows; i++) {
-    if (strcmp(table->rows[i]->cells[column_index], value) == 0) {
+  Row *row;
+  int i;
+  vec_foreach(table->rows, row, i) {
+    if (strcmp(hash_get(row->cells, column_name), value) == 0) {
       row_index = i;
       break;
     }

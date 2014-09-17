@@ -4,6 +4,7 @@
 /* define tests */
 void test_create_and_find_table() {
   init_db();
+
   create_table("TEST TABLE");
   create_table("TEST 2");
   assert_string_equal("TEST 2", find_table("TEST 2")->name);
@@ -27,9 +28,9 @@ void test_create_and_find_column() {
   Table *table = find_table("TEST TABLE");
   add_column(table, "COL1");
   add_column(table, "COL2");
-  assert_int_equal(1, find_column(table, "COL2"));
-  assert_int_equal(0, find_column(table, "COL1"));
-  assert_int_equal(-1, find_column(table, "NONEXISTANT"));
+  assert_string_equal("COL2", find_column(table, "COL2")->name);
+  assert_string_equal("COL1", find_column(table, "COL1")->name);
+  assert_true(find_column(table, "NONEXISTANT") == NULL);
   drop_table("TEST TABLE");
   free_db();
 }
