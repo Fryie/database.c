@@ -10,8 +10,7 @@ typedef struct Column {
 } Column;
 
 typedef struct Row {
-  hash_t *cells;
-  int num_cells;
+  hash_t *cells; /* col name -> string value */
 } Row;
 
 typedef vec_t(Row*) row_vec_t;
@@ -31,8 +30,8 @@ Column *find_column(Table *table, char *column_name);
 int create_table(char *name);
 int drop_table(char *name);
 int add_column(Table *table, char *column_name);
-int drop_column(Column *column);
-int drop_row(Row *row);
+int drop_column(Table *table, Column *column);
+int drop_row(Table *table, Row *row);
 int insert_into(char *table_name, char *column_names[], char *values[], int num_values);
 /* returns pointer to a cell hash which has to be appropriately freed! */
 hash_t *select_from(char *column_names[], int num_columns, char *table_name, int row_index);

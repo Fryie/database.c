@@ -44,7 +44,7 @@ int drop_table(char *name) {
 
   /* free columns */
   hash_each_val(table->columns, {
-    drop_column((Column *) val);
+    drop_column(table, (Column *) val);
   })
   hash_free(table->columns);
 
@@ -52,7 +52,7 @@ int drop_table(char *name) {
   int i;
   Row *row;
   vec_foreach(table->rows, row, i) {
-    drop_row(row);
+    drop_row(table, row);
   }
   vec_deinit(table->rows);
   free(table->rows);
@@ -76,10 +76,25 @@ int add_column(Table *table, char *column_name) {
   return 0;
 }
 
-int drop_column(Column *column) {
+int drop_column(Table *table, Column *column) {
+  hash_del(table->columns, column->name);
+
+  /* drop for each row */
+  Row *row;
+  int i;
+  vec_foreach(table->rows, row, i) {
+    hash_del(row->cells, column->name);
+  }
+
+  free(column);
+
+  return 0;
 }
 
-int drop_row(Row *row) {
+int drop_row(Table *table, Row *row) {
+  hash_free(row->cells);
+  vec_remove(table->rows, row);
+  free(row);
 }
 
 Column *find_column(Table *table, char *column_name) {
