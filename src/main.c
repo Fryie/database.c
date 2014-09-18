@@ -25,8 +25,8 @@ int main() {
     hash_each(result, {
       printf("%s: %s\n", key, val);
     })
+    hash_free(result);
   }
-  hash_free(result);
 
   free_db();
 

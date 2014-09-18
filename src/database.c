@@ -125,7 +125,6 @@ int insert_into(char *table_name, char *column_names[], char *values[], int num_
 }
 
 hash_t *select_from(char *column_names[], int num_columns, char *table_name, int row_index) {
-  hash_t *result = hash_new();
   if (row_index == -1) {
     return NULL;
   }
@@ -143,10 +142,12 @@ hash_t *select_from(char *column_names[], int num_columns, char *table_name, int
     return NULL;
   }
 
+  hash_t *result = hash_new();
   for (int i = 0; i < num_columns; i++) {
     /* this is not schemaless! only allow access to defined columns */
     Column *column = find_column(table, column_names[i]);
     if (!column) {
+      hash_free(result);
       return NULL;
     }
 
