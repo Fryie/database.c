@@ -49,11 +49,20 @@ int drop_table(char *name) {
   hash_free(table->columns);
 
   /* free rows */
+  /* I have to store the rows in a temp array,
+   * because otherwise I'd be modifying the structure I'm looping over */
+  int row_num = table->rows->length;
+  Row *rows[row_num];
+
   int i;
   Row *row;
   vec_foreach(table->rows, row, i) {
-    drop_row(table, row);
+    rows[i] = row;
   }
+  for (i = 0; i < row_num; i++) {
+    drop_row(table, rows[i]);
+  }
+
   vec_deinit(table->rows);
   free(table->rows);
 
