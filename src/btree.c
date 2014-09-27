@@ -24,6 +24,25 @@ void *btree_node_search(BTreeNode *node, int key) {
   return btree_node_search(child, key);
 }
 
+int btree_node_free(BTreeNode *node) {
+  if (node) {
+    for (int i = 0; i < BTREE_NUM_CHILDREN; i++) {
+      /* free children recursively */
+      btree_node_free(node->children[i]);
+    }
+
+    /* free entries */
+    for (int i = 0; i < BTREE_NUM_ENTRIES; i++) {
+      free(node->entries[i]->value);
+      free(node->entries[i]);
+    }
+
+    free(node);
+  }
+
+  return 0;
+}
+
 /* public */
 BTree *btree_create() { 
   BTree *btree = malloc(sizeof(BTree));
@@ -33,10 +52,9 @@ BTree *btree_create() {
 };
 
 int btree_free(BTree *btree) {
-  if (btree->root) {
-    free(btree->root);
-  }
+  btree_node_free(btree->root);
   free(btree);
+  return 0;
 };
 
 void *btree_search(BTree *btree, int key) {
