@@ -28,7 +28,7 @@ int find_table_index(char *table_name);
 Table *find_table(char *table_name);
 Column *find_column(Table *table, char *column_name);
 int create_table(char *name);
-int drop_table(char *name);
+int drop_table(Table *table);
 int add_column(Table *table, char *column_name);
 int drop_column(Table *table, Column *column);
 int drop_row(Table *table, Row *row);

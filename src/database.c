@@ -14,8 +14,8 @@ void init_db() {
 }
 
 void free_db() {
-  hash_each_key(tables, {
-    drop_table((char *) key);
+  hash_each_val(tables, {
+    drop_table((Table *) val);
   })
   hash_free(tables);
 }
@@ -35,9 +35,7 @@ int create_table(char *name) {
   return 0;
 }
 
-int drop_table(char *name) {
-  Table *table = find_table(name);
-
+int drop_table(Table *table) {
   if (!table) {
     return -1;
   }
@@ -68,7 +66,7 @@ int drop_table(char *name) {
 
   /* free table */
   free(table);
-  hash_del(tables, name);
+  hash_del(tables, table->name);
 
   return 0;
 }
