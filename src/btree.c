@@ -5,7 +5,8 @@
 /* private */
 void *btree_node_search(BTreeNode *node, int key) {
   int i = 0;
-  while (i < BTREE_NUM_ENTRIES && node->entries[i] != NULL && key > node->entries[i]->key) {
+
+  while (i < BTREE_NUM_ENTRIES && node->entries[i] && key > node->entries[i]->key) {
     i++;
   }
 
@@ -33,8 +34,12 @@ int btree_node_free(BTreeNode *node) {
 
     /* free entries */
     for (int i = 0; i < BTREE_NUM_ENTRIES; i++) {
-      free(node->entries[i]->value);
-      free(node->entries[i]);
+      if (node->entries[i]) {
+        if (node->entries[i]->value) {
+          free(node->entries[i]->value);
+        }
+        free(node->entries[i]);
+      }
     }
 
     free(node);
