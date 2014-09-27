@@ -1,5 +1,5 @@
 #include "btree.h"
-#include "stdlib.h"
+#include <stdlib.h>
 
 BTree *btree_create() { 
   BTree *btree = malloc(sizeof(BTree));
@@ -14,3 +14,5 @@ int btree_free(BTree *btree) {
   }
   free(btree);
 };
+
+void *btree_search(BTree *btree, int key) {};
