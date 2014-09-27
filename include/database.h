@@ -32,9 +32,9 @@ int drop_table(char *name);
 int add_column(Table *table, char *column_name);
 int drop_column(Table *table, Column *column);
 int drop_row(Table *table, Row *row);
-int insert_into(char *table_name, char *column_names[], char *values[], int num_values);
+int insert_into(Table *table, char *column_names[], char *values[], int num_values);
 /* returns pointer to a cell hash which has to be appropriately freed! */
-hash_t *select_from(char *column_names[], int num_columns, char *table_name, int row_index);
+hash_t *select_from(Table *table, char *column_names[], int num_columns, int row_index);
 int list_columns(Table *table);
 int list_tables();
 int where_equals(char *table_name, char *column_name, char *value);

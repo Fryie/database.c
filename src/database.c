@@ -110,9 +110,7 @@ Column *find_column(Table *table, char *column_name) {
   return hash_get(table->columns, column_name);
 }
 
-int insert_into(char *table_name, char *column_names[], char *values[], int num_values) {
-  Table *table = find_table(table_name);
-
+int insert_into(Table *table, char *column_names[], char *values[], int num_values) {
   if (!table) {
     return -1;
   }
@@ -133,12 +131,11 @@ int insert_into(char *table_name, char *column_names[], char *values[], int num_
   return 0;
 }
 
-hash_t *select_from(char *column_names[], int num_columns, char *table_name, int row_index) {
+hash_t *select_from(Table *table, char *column_names[], int num_columns, int row_index) {
   if (row_index == -1) {
     return NULL;
   }
 
-  Table *table = find_table(table_name);
   if (!table) {
     return NULL;
   }
