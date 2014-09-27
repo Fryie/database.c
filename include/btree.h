@@ -2,6 +2,8 @@
 #define BTREE_H
 
 #define BTREE_DEGREE 2
+#define BTREE_NUM_CHILDREN 2*BTREE_DEGREE
+#define BTREE_NUM_ENTRIES BTREE_NUM_CHILDREN+1
 
 typedef struct BTreeEntry {
   int key;
@@ -9,8 +11,8 @@ typedef struct BTreeEntry {
 } BTreeEntry;
 
 struct BTreeNode {
-  BTreeEntry *entries[2*BTREE_DEGREE-1];
-  struct BTreeNode *children[2*BTREE_DEGREE];
+  BTreeEntry *entries[BTREE_NUM_ENTRIES];
+  struct BTreeNode *children[BTREE_NUM_CHILDREN];
 };
 
 typedef struct BTreeNode BTreeNode;

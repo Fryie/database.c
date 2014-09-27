@@ -43,7 +43,7 @@ void test_manually_build_and_search_btree() {
   btree->root->children[1] = child_two;
 
 
-  assert_string_equal("five", (char *) btree_search(btree, 5));
+  assert_string_equal("eight", (char *) btree_search(btree, 8));
 
   btree_free(btree);
 }
