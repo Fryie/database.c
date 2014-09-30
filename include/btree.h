@@ -13,6 +13,7 @@ typedef struct BTreeEntry {
 struct BTreeNode {
   BTreeEntry *entries[BTREE_NUM_ENTRIES];
   struct BTreeNode *children[BTREE_NUM_CHILDREN];
+  int next_index;
 };
 
 typedef struct BTreeNode BTreeNode;
@@ -24,4 +25,5 @@ typedef struct BTree {
 BTree *btree_create();
 int btree_free(BTree *btree);
 void *btree_search(BTree *btree, int key);
+void btree_insert(BTree *btree, int key, void *value);
 #endif

@@ -50,6 +50,7 @@ int btree_node_free(BTreeNode *node) {
 
 BTreeNode *btree_node_create() {
   BTreeNode *node = malloc(sizeof(BTreeNode));
+  node->next_index = 0;
 
   /* initialize entries and children to NULL */
   /* this is to avoid weird segfaulting */
@@ -69,14 +70,21 @@ BTree *btree_create() {
   btree->root = btree_node_create();
 
   return btree;
-};
+}
 
 int btree_free(BTree *btree) {
   btree_node_free(btree->root);
   free(btree);
   return 0;
-};
+}
 
 void *btree_search(BTree *btree, int key) {
   return btree_node_search(btree->root, key);
-};
+}
+
+void btree_insert(BTree *btree, int key, void *value) {
+  BTreeEntry *entry = malloc(sizeof(BTreeEntry));
+  entry->key = key;
+  entry->value = value;
+  btree->root->entries[btree->root->next_index++] = entry;
+}
