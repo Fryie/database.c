@@ -62,10 +62,8 @@ void test_manually_build_and_search_btree() {
 
 void test_search_in_empty_btree() {
   BTree *btree = btree_create();
-  /*  WTF THIS TEST BREAKS BUT ONLY IF THE OTHER TESTS ARE RUN AS WELL */
-  /*
   assert_true(btree_search(btree, 8) == NULL);
-  btree_free(btree);*/
+  btree_free(btree);
 }
 
 /* run tests */
