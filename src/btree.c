@@ -48,11 +48,26 @@ int btree_node_free(BTreeNode *node) {
   return 0;
 }
 
+BTreeNode *btree_node_create() {
+  BTreeNode *node = malloc(sizeof(BTreeNode));
+
+  /* initialize entries and children to NULL */
+  /* this is to avoid weird segfaulting */
+  for (int i = 0; i < BTREE_NUM_ENTRIES; i++) {
+    node->entries[i] = NULL;
+  }
+  for (int i = 0; i < BTREE_NUM_CHILDREN; i++) {
+    node->children[i] = NULL;
+  }
+
+  return node;
+}
+
 /* public */
 BTree *btree_create() { 
   BTree *btree = malloc(sizeof(BTree));
-  BTreeNode *root = malloc(sizeof(BTreeNode));
-  btree->root = root;
+  btree->root = btree_node_create();
+
   return btree;
 };
 

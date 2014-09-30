@@ -56,6 +56,11 @@ void test_manually_build_and_search_btree() {
 
 
   assert_true(*((int *) btree_search(btree, 8)) == 8);
+  assert_true(*((int *) btree_search(btree, 5)) == 5);
+  assert_true(*((int *) btree_search(btree, 1)) == 1);
+  assert_true(*((int *) btree_search(btree, 2)) == 2);
+  assert_true(*((int *) btree_search(btree, 3)) == 3);
+  assert_true(*((int *) btree_search(btree, 7)) == 7);
 
   btree_free(btree);
 }
@@ -66,12 +71,48 @@ void test_search_in_empty_btree() {
   btree_free(btree);
 }
 
+void test_search_with_only_one_node() {
+  BTree *btree = btree_create();
+  BTreeEntry *entry = malloc(sizeof(BTreeEntry));
+  int *value = malloc(sizeof(int));
+  *value = 4;
+  entry->key = 4;
+  entry->value = value;
+  btree->root->entries[0] = entry;
+  assert_true(*((int *) btree_search(btree, 4)) == 4);
+  btree_free(btree);
+}
+
+void test_when_value_not_in_tree() {
+  BTree *btree = btree_create();
+  BTreeEntry *entry = malloc(sizeof(BTreeEntry));
+  int *value = malloc(sizeof(int));
+  *value = 3;
+  entry->key = 4;
+  entry->value = value;
+
+  /* Avoid memory issues */
+  for (int i = 0; i < BTREE_NUM_ENTRIES; i++) {
+    btree->root->entries[i] = NULL;
+  }
+  for (int i = 0; i < BTREE_NUM_CHILDREN; i++) {
+    btree->root->children[i] = NULL;
+  }
+
+  btree->root->entries[0] = entry;
+
+  assert_true(btree_search(btree, 12) == NULL);
+  btree_free(btree);
+}
+
 /* run tests */
 void test_fixture_btree() {
   test_fixture_start();
   run_test(test_create_btree);
   run_test(test_manually_build_and_search_btree);
   run_test(test_search_in_empty_btree);
+  run_test(test_search_with_only_one_node);
+  run_test(test_when_value_not_in_tree);
   test_fixture_end();
 }
 
