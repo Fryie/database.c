@@ -119,6 +119,7 @@ void test_insert_sequentially_into_root() {
   assert_true(*((int *)btree->root->entries[0]->value) == 1);
   assert_true(*((int *)btree->root->entries[1]->value) == 30);
   assert_true(*((int *)btree->root->entries[2]->value) == 33);
+  btree_free(btree);
 }
 
 void test_insert_nonsequentially_into_root() {
@@ -135,8 +136,20 @@ void test_insert_nonsequentially_into_root() {
   assert_true(*((int *)btree->root->entries[0]->value) == 1);
   assert_true(*((int *)btree->root->entries[1]->value) == 30);
   assert_true(*((int *)btree->root->entries[2]->value) == 33);
+  btree_free(btree);
 }
 
+void test_insert_into_child_when_root_full() {
+  BTree *btree = btree_create();
+  for (int i = 0; i < BTREE_NUM_ENTRIES + 2; i++) {
+    int *value = malloc(sizeof(int));
+    *value = i;
+    btree_insert(btree, i, value);
+  }
+  assert_true(*((int *)btree->root->children[0]->entries[0]->value) == BTREE_NUM_ENTRIES);
+  assert_true(*((int *)btree->root->children[0]->entries[1]->value) == BTREE_NUM_ENTRIES+1);
+  btree_free(btree);
+}
 
 /* run tests */
 void test_fixture_btree() {
@@ -148,6 +161,7 @@ void test_fixture_btree() {
   run_test(test_when_value_not_in_tree);
   run_test(test_insert_sequentially_into_root);
   run_test(test_insert_nonsequentially_into_root);
+  run_test(test_insert_into_child_when_root_full);
   test_fixture_end();
 }
 

@@ -88,6 +88,16 @@ void btree_insert(BTree *btree, int key, void *value) {
   entry->key = key;
   entry->value = value;
 
+  if (btree->root->next_index >= BTREE_NUM_ENTRIES) {
+    printf("inserting into child: %d\n", key);
+    if (!btree->root->children[0]) {
+      btree->root->children[0] = btree_node_create();
+    }
+    printf("inserting at child index: %d\n", btree->root->children[0]->next_index);
+    btree->root->children[0]->entries[btree->root->children[0]->next_index++] = entry;
+    printf("next index is now: %d\n", btree->root->children[0]->next_index);
+  }
+
   /* find place to insert */
   int i = btree->root->next_index;
   while (i > 0 && btree->root->entries[i-1]->key > key) {
