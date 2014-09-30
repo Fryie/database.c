@@ -35,9 +35,6 @@ int btree_node_free(BTreeNode *node) {
     /* free entries */
     for (int i = 0; i < BTREE_NUM_ENTRIES; i++) {
       if (node->entries[i]) {
-        if (node->entries[i]->value) {
-          free(node->entries[i]->value);
-        }
         free(node->entries[i]);
       }
     }
@@ -72,6 +69,9 @@ BTree *btree_create() {
   return btree;
 }
 
+/* This will free the tree and its nodes
+ * Freeing the values in the tree remains the
+ * client's responsibility! */
 int btree_free(BTree *btree) {
   btree_node_free(btree->root);
   free(btree);
