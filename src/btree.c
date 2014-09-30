@@ -82,9 +82,20 @@ void *btree_search(BTree *btree, int key) {
   return btree_node_search(btree->root, key);
 }
 
+/* WIP */
 void btree_insert(BTree *btree, int key, void *value) {
   BTreeEntry *entry = malloc(sizeof(BTreeEntry));
   entry->key = key;
   entry->value = value;
-  btree->root->entries[btree->root->next_index++] = entry;
+
+  /* find place to insert */
+  int i = btree->root->next_index;
+  while (i > 0 && btree->root->entries[i-1]->key > key) {
+    /* shift values as needed */
+    btree->root->entries[i] = btree->root->entries[i-1];
+    i--;
+  }
+
+  btree->root->entries[i] = entry;
+  btree->root->next_index++;
 }
