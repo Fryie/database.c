@@ -3,7 +3,7 @@ CFLAGS = -std=c99
 DEBUG_CFLAGS = -std=c99 -g -O0
 VALGRIND_OPTS = --leak-check=full --show-leak-kinds=all
 
-vpath %.c src
+vpath %.c src test
 vpath %.h include
 
 .PHONY: run test valgrind test_valgrind
