@@ -65,8 +65,8 @@ int drop_table(Table *table) {
   free(table->rows);
 
   /* free table */
-  free(table);
   hash_del(tables, table->name);
+  free(table);
 
   return 0;
 }
